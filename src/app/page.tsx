@@ -1,9 +1,7 @@
 import Card from './components/Card'
 import Header from './components/Header'
-import NavBar from './components/NavBar'
-import styles from './page.module.css'
 
-export default function Home() {
+export default  function Home() {
   return (
         <main>
           <Header />
@@ -14,3 +12,4 @@ export default function Home() {
 
   )
 }
+// 
