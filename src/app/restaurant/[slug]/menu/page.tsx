@@ -1,13 +1,36 @@
-import NavBar from "@/app/components/NavBar";
 import RestaurantNavBar from "../components/RestaurantNavBar";
 import RestaurantMenu from "../components/RestaurantMenu";
-import Header from "../components/Header";
+import { PrismaClient } from "@prisma/client";
 
-export default function RestaurantMenuPage() {
+const prisma = new PrismaClient()
+interface Props {
+  params: {
+    slug: string
+  }
+}
+
+const getRestaurantMenu = async (slug: string) => {
+  const menu = await prisma.restaurant.findUnique({
+    where: {
+      slug
+    },
+    select: {
+      items: true
+    }
+  })
+
+  if (!menu) {
+    throw new Error()
+  }
+  return menu.items
+}
+
+export default async function RestaurantMenuPage({ params }: Props) {
+  const items = await getRestaurantMenu(params.slug)
   return (
     <div className="bg-white w-[100%] rounded p-3 shadow">
-      <RestaurantNavBar />
-      <RestaurantMenu />
+      <RestaurantNavBar slug={params.slug} />
+      <RestaurantMenu items={items} />
     </div>
   )
 }
