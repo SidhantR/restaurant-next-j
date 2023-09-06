@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Header from "./components/Header";
 import RestaurantCard from "./components/Restaurant";
 import SideBar from "./components/SideBar";
-import { PrismaClient } from "@prisma/client";
+import { PRICE, PrismaClient } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: '| search',
@@ -11,6 +11,14 @@ export const metadata: Metadata = {
 }
 
 const prisma = new PrismaClient()
+
+const fetchRegion = async () => {
+  return await prisma.region.findMany()
+}
+
+const fetchLocations = async () => {
+  return await prisma.location.findMany()
+}
 
 const fetchRestaurants = async (city: string | undefined) => {
   const select = {
@@ -22,7 +30,7 @@ const fetchRestaurants = async (city: string | undefined) => {
     location: true,
     slug: true,
   }
-  if (!city) return await prisma.restaurant.findMany({select})
+  if (!city) return await prisma.restaurant.findMany({ select })
 
   return await prisma.restaurant.findMany({
     where: {
@@ -36,14 +44,18 @@ const fetchRestaurants = async (city: string | undefined) => {
   })
 }
 
-export default async function SearchPage({ searchParams }: { searchParams: { city: string } }) {
+export default async function SearchPage({ searchParams }: { searchParams: 
+  { city?: string, region?: string, price?: PRICE } }) {
 
   const restaurants = await fetchRestaurants(searchParams.city)
+  const locations = await fetchLocations()
+  const regions = await fetchRegion()
+
   return (
     <>
       <Header />
       <div className="flex py-4 m-auto w-2/3 justify-between items-start">
-        <SideBar />
+        <SideBar locations={locations} regions={regions} searchParams={searchParams} />
         <div className="w-5/6">
           {restaurants.length ? (
             restaurants.map((restaurant) => (
