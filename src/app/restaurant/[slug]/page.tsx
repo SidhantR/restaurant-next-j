@@ -4,7 +4,7 @@ import RestaurantRating from "./components/RestaurantRating";
 import RestaurantDescription from "./components/RestaurantDescription";
 import RestaurantImage from "./components/RestaurantImage";
 import ReviewCard from "./components/ReviewCard";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Review } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
@@ -19,7 +19,8 @@ interface RestaurantType {
     name: string,
     images: string[],
     description: string,
-    slug: string
+    slug: string,
+    review: Review[]
 }
 
 const fetchrestaurant = async (slug: string): Promise<RestaurantType> => {
@@ -32,9 +33,11 @@ const fetchrestaurant = async (slug: string): Promise<RestaurantType> => {
             name: true,
             images: true,
             description: true,
-            slug: true
+            slug: true,
+            review : true
         }
     })
+    console.log(restaurant, 'restaurant')
 
     if(!restaurant){
         throw new Error()
@@ -49,18 +52,20 @@ export default async function RestaurantDetailsPage({ params }: Props) {
             <div className="bg-white w-[70%] rounded p-3 shadow">
                 <RestaurantNavBar slug={restaurant.slug} />
                 <RestaurantTitle title={restaurant?.name} />
-                <RestaurantRating />
+                <RestaurantRating review={restaurant?.review} />
                 <RestaurantDescription description={restaurant?.description} />
                 <RestaurantImage images={restaurant?.images} />
                 <div>
                     <h1 className="font-bold text-3xl mt-10 mb-7 borber-b pb-5">
-                        What 100 people are saying
+                        What {restaurant?.review?.length} 
+                        {restaurant?.review?.length === 1 ? " person": ' people'} are saying
                     </h1>
                     <div>
-                        <ReviewCard />
+                        {restaurant?.review.map((review) => (
+                            <ReviewCard key={review.id} review={review} />
+                        ))}
                     </div>
                 </div>
-                {/* REVIEWS */}
             </div>
             <div className="w-[27%] relative text-reg">
                 <div className="fixed w-[15%] bg-white rounded p-3 shadow">

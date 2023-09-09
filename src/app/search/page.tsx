@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Header from "./components/Header";
-import RestaurantCard from "./components/Restaurant";
+import RestaurantCard from "./components/RestaurantCard";
 import SideBar from "./components/SideBar";
 import { PRICE, PrismaClient } from "@prisma/client";
 
@@ -36,6 +36,7 @@ const fetchRestaurants = async (searchParams : searchParams) => {
     region: true,
     location: true,
     slug: true,
+    review: true
   }
   if (!searchParams.city && !searchParams.price && !searchParams.region) return await prisma.restaurant.findMany({ select })
 
