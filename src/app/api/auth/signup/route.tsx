@@ -1,6 +1,8 @@
+import { PrismaClient } from "@prisma/client";
 import { error } from "console";
 import { NextResponse } from "next/server";
 import validator from "validator"
+import bcrypt from 'bcrypt'
 
 interface formData {
     firstName : string, 
@@ -16,6 +18,8 @@ export async function GET() {
         id: 'harry'
     })
 }
+
+const prisma = new PrismaClient()
 
 export async function POST(request: Request){
     const res:formData = await request.json()
@@ -41,7 +45,7 @@ export async function POST(request: Request){
             errorMessage: "Email is invalid"
         },
         {
-            valid: validator.isMobilePhone(res.phoneNumber.toString()),
+            valid: validator.isMobilePhone(String(res.phoneNumber)),
             errorMessage : "Phone Number is invalid"
         },
         {
@@ -59,5 +63,16 @@ export async function POST(request: Request){
 
     if(errors.length) return NextResponse.json({errorMessage: errors[0]})
 
-    return NextResponse.json({res})
+    const userWithEmail = await prisma.user.findUnique({
+        where : {
+            email : res.email
+        }
+    })
+
+    if(userWithEmail) return NextResponse.json(
+        {errorMessage : "Email address already associated with another account"})
+
+    const hashedPassword = await bcrypt.hash(res.password, 10)
+
+    return NextResponse.json({res, hashedPassword})
 }

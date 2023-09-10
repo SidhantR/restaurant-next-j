@@ -62,13 +62,14 @@ model User {
   first_name String
   last_name  String
   city       String
-  email      String
+  email      String   @unique
   password   String
   phone      String
-  review    Review[]
+  review     Review[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
+
 model Review {
   id            Int        @id @default(autoincrement())
   first_name    String
