@@ -5,6 +5,7 @@ import RestaurantDescription from "./components/RestaurantDescription";
 import RestaurantImage from "./components/RestaurantImage";
 import ReviewCard from "./components/ReviewCard";
 import { PrismaClient, Review } from "@prisma/client";
+import { notFound } from "next/navigation";
 
 const prisma = new PrismaClient()
 
@@ -40,7 +41,8 @@ const fetchrestaurant = async (slug: string): Promise<RestaurantType> => {
     console.log(restaurant, 'restaurant')
 
     if(!restaurant){
-        throw new Error()
+        // throw new Error("No Restaurant Found")
+        notFound()
     }
     return restaurant
 }
