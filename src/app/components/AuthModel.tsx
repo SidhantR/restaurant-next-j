@@ -1,9 +1,9 @@
 "use client"
 import { useState } from 'react';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import AuthModelInput from './AuthModelInput';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -17,14 +17,37 @@ const style = {
     p: 4,
 };
 
+interface formData {
+    firstName : string, 
+    lastName: string,
+    email:string,
+    city: string,
+    phoneNumber: number
+}
+
 export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    const { register, handleSubmit, formState: {errors} } = useForm<formData>({
+        defaultValues: {
+            firstName : 'harry',
+            lastName: 'singh',
+            email: 'harry@gmail.com',
+            phoneNumber: 1234567890,
+            city: 'delhi'
+        }
+    })
+
     const renderContent = (signInContent: string, signOutContent: string) => {
         return isSignIn ? signInContent : signOutContent
     }
+
+    const onSubmit: SubmitHandler<formData> = (data) => {
+        console.log(data, 'data')
+    }
+
     return (
         <div>
             <button onClick={handleOpen}
@@ -50,8 +73,8 @@ export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
                             {renderContent("Log into your Account", 'Create Your BookMyTable Account')}
                             </h2>
                         </div>
-                        <AuthModelInput />
-                        <button className='uppercase bg-red-600 w-full text-white p-3 rounded text-sm mb-5 disabled:bg-gray-400 '>
+                        <AuthModelInput errors={errors} register={register} />
+                        <button onClick={handleSubmit(onSubmit)} className='uppercase bg-red-600 w-full text-white p-3 rounded text-sm mb-5 disabled:bg-gray-400 '>
                             {renderContent("Sign In", "Create Account")}
                         </button>
                     </div>
