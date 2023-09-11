@@ -3,6 +3,7 @@ import { error } from "console";
 import { NextResponse } from "next/server";
 import validator from "validator"
 import bcrypt from 'bcrypt'
+import * as jose from 'jose'
 
 interface formData {
     firstName : string, 
@@ -84,6 +85,12 @@ export async function POST(request: Request){
             password: hashedPassword
         }
     })
+    const alg = "HS256"
+    const signature = new TextEncoder().encode(process.env.JWT_SECRET)
+    const token = await new jose.SignJWT({email: res.email})
+    .setProtectedHeader({alg})
+    .setExpirationTime("24h")
+    .sign(signature)
 
-    return NextResponse.json({res:user})
+    return NextResponse.json({res:user, token})
 }
