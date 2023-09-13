@@ -62,7 +62,7 @@ export async function POST(request: Request){
         }
     })
 
-    if(errors.length) return NextResponse.json({errorMessage: errors[0]})
+    if(errors.length) return new NextResponse(JSON.stringify({errorMessage: errors[0]}), {status: 400})
 
     const userWithEmail = await prisma.user.findUnique({
         where : {
@@ -70,8 +70,8 @@ export async function POST(request: Request){
         }
     })
 
-    if(userWithEmail) return NextResponse.json(
-        {errorMessage : "Email address already associated with another account"})
+    if(userWithEmail) return new NextResponse(JSON.stringify(
+        {errorMessage : "Email address already associated with another account"}), {status: 400})
 
     const hashedPassword = await bcrypt.hash(res.password, 10)
 

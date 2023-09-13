@@ -31,6 +31,9 @@ export async function POST(request: Request) {
             errors.push(check.errorMessage)
         }
     })
+    if(errors.length) return new NextResponse(JSON.stringify({errorMessage : errors[0]}), {
+        status: 400     //bad request
+    })
 
     const userWithEmail = await prisma.user.findUnique({
         where: {
