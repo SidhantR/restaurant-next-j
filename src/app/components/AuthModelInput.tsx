@@ -1,13 +1,14 @@
 import { UseFormRegister, FieldValues, FieldErrors } from 'react-hook-form'
 
-export default function AuthModelInout({register, errors}: {
-    register : UseFormRegister<FieldValues>, 
-    errors: FieldErrors<FieldValues>
+export default function AuthModelInout({ register, errors, isSignIn }: {
+    register : UseFormRegister<FieldValues>,
+    errors: FieldErrors<FieldValues>,
+    isSignIn: boolean
 }) {
-    
+
     return (
         <div>
-            <div className="my-3 flex justify-between text-sm">
+            {isSignIn ? null : (<div className="my-3 flex justify-between text-sm">
                 <input
                     type='text'
                     className={`border ${errors.firstName ? "border-red-500" : ""} rounded p-2 py-3 w-[49%] `}
@@ -20,7 +21,7 @@ export default function AuthModelInout({register, errors}: {
                     placeholder="Last Name"
                     {...register("lastName", {required:true, pattern: /^[a-zA-Z ]+$/})}
                 />
-            </div>
+            </div>)}
             <div className="my-3 flex text-sm w-full">
                 <input
                     type='email'
@@ -29,7 +30,7 @@ export default function AuthModelInout({register, errors}: {
                     {...register("email", {required:true, pattern: /^\S+@\S+$/i})}
                 />
             </div>
-            <div className="my-3 flex justify-between text-sm">
+            {isSignIn ? null : (<div className="my-3 flex justify-between text-sm">
                 <input
                     type='text'
                     className={`border ${errors.city ? "border-red-500" : ""} rounded p-2 py-3 w-[49%] `}
@@ -42,7 +43,7 @@ export default function AuthModelInout({register, errors}: {
                     placeholder="Phone Number"
                     {...register("phoneNumber", {required:true, pattern: /^[0-9+-]+$/, maxLength: 10, minLength: 10})}
                 />
-            </div>
+            </div>)}
             <div className="my-3 flex text-sm w-full">
                 <input
                     type='password'

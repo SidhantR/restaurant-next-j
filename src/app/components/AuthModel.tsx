@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import AuthModelInput from './AuthModelInput';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import useAuth from '@/hooks/useAuth';
 
 const style = {
     position: 'absolute' as 'absolute',
@@ -30,22 +31,16 @@ export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    const { register, handleSubmit, formState: {errors} } = useForm<formData>({
-        defaultValues: {
-            firstName : 'harry',
-            lastName: 'singh',
-            email: 'harry@gmail.com',
-            phoneNumber: 1234567890,
-            city: 'delhi'
-        }
-    })
+    const {signIn} = useAuth()
+
+    const { register, handleSubmit, formState: {errors} } = useForm()
 
     const renderContent = (signInContent: string, signOutContent: string) => {
         return isSignIn ? signInContent : signOutContent
     }
 
-    const onSubmit: SubmitHandler<formData> = (data) => {
-        console.log(data, 'data')
+    const onSubmit = (data: any) => {
+        signIn(data)
     }
 
     return (
@@ -73,7 +68,7 @@ export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
                             {renderContent("Log into your Account", 'Create Your BookMyTable Account')}
                             </h2>
                         </div>
-                        <AuthModelInput errors={errors} register={register} />
+                        <AuthModelInput errors={errors} register={register} isSignIn={isSignIn} />
                         <button onClick={handleSubmit(onSubmit)} className='uppercase bg-red-600 w-full text-white p-3 rounded text-sm mb-5 disabled:bg-gray-400 '>
                             {renderContent("Sign In", "Create Account")}
                         </button>
